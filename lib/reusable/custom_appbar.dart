@@ -73,15 +73,27 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 themeController.toggleTheme(); // Toggle theme on button press
               },
             )),
-        // New Settings Icon
+        IconButton(
+          icon: const Icon(Icons.home, color: Colors.white),
+          onPressed: () {
+            // Action for settings button
+            Get.toNamed('/');
+          },
+        ),
+        IconButton(
+          icon: const Icon(Icons.sports_gymnastics, color: Colors.white),
+          onPressed: () {
+            // Action for settings button
+            Get.toNamed('/level-practice-page');
+          },
+        ),
         IconButton(
           icon: const Icon(Icons.assessment, color: Colors.white),
           onPressed: () {
             // Action for settings button
-            Get.toNamed('/speak-page'); // Navigate to settings page
+            Get.toNamed('/speak-page'); 
           },
         ),
-        // New Feedback Icon
         IconButton(
           icon: const Icon(Icons.emoji_events, color: Colors.white),
           onPressed: () {

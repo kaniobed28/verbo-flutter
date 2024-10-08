@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:readit/Pronunciation/views/pronunciation_practice_page.dart';
 import 'package:readit/challenge/app_translation.dart';
 import 'package:readit/challenge/questions_ui.dart';
 import 'package:readit/text_to_audio/views/text_to_audio_main_ui.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
           // Add other pages here
           GetPage(name: '/challenge-page', page: () => DailyChallengesPage()),
           GetPage(name: '/speak-page', page: () => VoiceToTextWidget()),
+          GetPage(name: '/level-practice-page', page: () => PronunciationPracticePage()),
         ],
       );
     });
