@@ -15,6 +15,33 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
+  final Map<String, String> features = {
+    'home': '/',
+    'practice': '/level-practice-page',
+    'listen': '/listen-page', // Updated route
+    'challenges': '/challenge-page',
+  };
+
+  void _searchFeature(String query) {
+    final lowerQuery = query.toLowerCase();
+    final matchingFeature = features.keys.firstWhere(
+      (feature) => feature.contains(lowerQuery),
+      orElse: () => '',
+    );
+
+    if (matchingFeature.isNotEmpty) {
+      Get.toNamed(features[matchingFeature]!);
+    } else {
+      Get.snackbar(
+        'No Match Found',
+        'No feature matches "$query". Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.black87,
+        colorText: Colors.white,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.put(ThemeController());
@@ -25,7 +52,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       backgroundColor: Theme.of(context).primaryColor,
       title: TextField(
         decoration: InputDecoration(
-          hintText: 'Search...',
+          hintText: 'Search features...',
           hintStyle: const TextStyle(color: Colors.white70),
           prefixIcon: const Icon(Icons.search, color: Colors.white),
           filled: true,
@@ -37,25 +64,23 @@ class _CustomAppBarState extends State<CustomAppBar> {
           contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
         ),
         style: const TextStyle(color: Colors.white),
-        onSubmitted: (query) {
-          Get.snackbar('Search', 'Searching for "$query"',
-              snackPosition: SnackPosition.BOTTOM);
-        },
+        onSubmitted: _searchFeature,
       ),
       actions: [
-        if (isSmallScreen) ...[
+        if (isSmallScreen)
           PopupMenuButton(
             icon: const Icon(Icons.menu, color: Colors.white),
             itemBuilder: (context) => [
               _popupMenuItem(Icons.home, 'Home', () => Get.toNamed('/')),
               _popupMenuItem(Icons.sports_gymnastics, 'Practice',
                   () => Get.toNamed('/level-practice-page')),
-              _popupMenuItem(Icons.assessment, 'Speak', () => Get.toNamed('/speak-page')),
+              _popupMenuItem(Icons.headset, 'Listen',
+                  () => Get.toNamed('/listen-page')), // Updated label and route
               _popupMenuItem(Icons.emoji_events, 'Challenges',
                   () => Get.toNamed('/challenge-page')),
             ],
-          ),
-        ] else ...[
+          )
+        else
           Row(
             children: [
               _navButton(
@@ -69,9 +94,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 onTap: () => Get.toNamed('/level-practice-page'),
               ),
               _navButton(
-                icon: Icons.assessment,
-                label: 'Speak',
-                onTap: () => Get.toNamed('/speak-page'),
+                icon: Icons.headset, // Updated icon
+                label: 'Listen', // Updated label
+                onTap: () => Get.toNamed('/listen-page'), // Updated route
               ),
               _navButton(
                 icon: Icons.emoji_events,
@@ -80,19 +105,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
               ),
             ],
           ),
-        ],
         const SizedBox(width: 8),
-        Obx(() => IconButton(
-              icon: Icon(
-                themeController.isDarkTheme.value
-                    ? Icons.wb_sunny
-                    : Icons.nights_stay,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                themeController.toggleTheme();
-              },
-            )),
+        Obx(
+          () => IconButton(
+            icon: Icon(
+              themeController.isDarkTheme.value
+                  ? Icons.wb_sunny
+                  : Icons.nights_stay,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              themeController.toggleTheme();
+            },
+          ),
+        ),
       ],
     );
   }
@@ -116,8 +142,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
     );
   }
 
-  PopupMenuItem _popupMenuItem(
-      IconData icon, String text, VoidCallback onTap) {
+  PopupMenuItem _popupMenuItem(IconData icon, String text, VoidCallback onTap) {
     return PopupMenuItem(
       onTap: onTap,
       child: Row(
