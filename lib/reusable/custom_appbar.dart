@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:readit/theme_constants.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final Widget? any; // Make this final to comply with @immutable
+  final Widget? any;
 
   const CustomAppBar({super.key, this.any});
 
@@ -11,57 +11,77 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   State<CustomAppBar> createState() => _CustomAppBarState();
 
   @override
-  Size get preferredSize => const Size.fromHeight(80.0); // Implement preferredSize here
+  Size get preferredSize => const Size.fromHeight(80.0);
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.put(ThemeController());
+    final isSmallScreen = MediaQuery.of(context).size.width < 600;
 
     return AppBar(
-      toolbarHeight: 80.0, // Adjust the height as needed
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Theme.of(context).primaryColor, // Start color
-              Colors.blueAccent, // End color
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      toolbarHeight: 80.0,
+      backgroundColor: Theme.of(context).primaryColor,
+      title: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search...',
+          hintStyle: const TextStyle(color: Colors.white70),
+          prefixIcon: const Icon(Icons.search, color: Colors.white),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.2),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide.none,
           ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
         ),
-      ),
-      title: GestureDetector(
-        onTap: () {
-          Get.toNamed("/");
+        style: const TextStyle(color: Colors.white),
+        onSubmitted: (query) {
+          Get.snackbar('Search', 'Searching for "$query"',
+              snackPosition: SnackPosition.BOTTOM);
         },
-        child: const Text(
-          'Verbo',
-          style: TextStyle(
-            fontSize: 24, // Adjust title font size
-            fontWeight: FontWeight.bold,
-            color: Colors.white, // Title text color
-          ),
-        ),
       ),
       actions: [
-        if (widget.any != null) widget.any!, // Add any widget if it's not null
-        IconButton(
-          icon: const Icon(Icons.info_outline, color: Colors.white), // Icon button
-          onPressed: () {
-            // Action for info button
-            Get.snackbar(
-              'Information',
-              'This app converts text to audio.',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.black87,
-              colorText: Colors.white,
-            );
-          },
-        ),
-        // Theme Toggle Button
+        if (isSmallScreen) ...[
+          PopupMenuButton(
+            icon: const Icon(Icons.menu, color: Colors.white),
+            itemBuilder: (context) => [
+              _popupMenuItem(Icons.home, 'Home', () => Get.toNamed('/')),
+              _popupMenuItem(Icons.sports_gymnastics, 'Practice',
+                  () => Get.toNamed('/level-practice-page')),
+              _popupMenuItem(Icons.assessment, 'Speak', () => Get.toNamed('/speak-page')),
+              _popupMenuItem(Icons.emoji_events, 'Challenges',
+                  () => Get.toNamed('/challenge-page')),
+            ],
+          ),
+        ] else ...[
+          Row(
+            children: [
+              _navButton(
+                icon: Icons.home,
+                label: 'Home',
+                onTap: () => Get.toNamed('/'),
+              ),
+              _navButton(
+                icon: Icons.sports_gymnastics,
+                label: 'Practice',
+                onTap: () => Get.toNamed('/level-practice-page'),
+              ),
+              _navButton(
+                icon: Icons.assessment,
+                label: 'Speak',
+                onTap: () => Get.toNamed('/speak-page'),
+              ),
+              _navButton(
+                icon: Icons.emoji_events,
+                label: 'Challenges',
+                onTap: () => Get.toNamed('/challenge-page'),
+              ),
+            ],
+          ),
+        ],
+        const SizedBox(width: 8),
         Obx(() => IconButton(
               icon: Icon(
                 themeController.isDarkTheme.value
@@ -70,38 +90,43 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 color: Colors.white,
               ),
               onPressed: () {
-                themeController.toggleTheme(); // Toggle theme on button press
+                themeController.toggleTheme();
               },
             )),
-        IconButton(
-          icon: const Icon(Icons.home, color: Colors.white),
-          onPressed: () {
-            // Action for settings button
-            Get.toNamed('/');
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.sports_gymnastics, color: Colors.white),
-          onPressed: () {
-            // Action for settings button
-            Get.toNamed('/level-practice-page');
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.assessment, color: Colors.white),
-          onPressed: () {
-            // Action for settings button
-            Get.toNamed('/speak-page'); 
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.emoji_events, color: Colors.white),
-          onPressed: () {
-            // Action for feedback button
-            Get.toNamed('/challenge-page'); // Navigate to challenge page
-          },
-        ),
       ],
+    );
+  }
+
+  Widget _navButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return TextButton.icon(
+      onPressed: onTap,
+      icon: Icon(icon, color: Colors.white),
+      label: Text(
+        label,
+        style: const TextStyle(color: Colors.white, fontSize: 12),
+      ),
+      style: TextButton.styleFrom(
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+      ),
+    );
+  }
+
+  PopupMenuItem _popupMenuItem(
+      IconData icon, String text, VoidCallback onTap) {
+    return PopupMenuItem(
+      onTap: onTap,
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.black),
+          const SizedBox(width: 8),
+          Text(text),
+        ],
+      ),
     );
   }
 }

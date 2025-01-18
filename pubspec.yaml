@@ -14,6 +14,8 @@ dependencies:
   get: ^4.6.6
   speech_to_text: ^7.0.0
   http: ^0.13.3
+  webview_flutter_web: ^0.2.3+2
+  
 
 
 dev_dependencies:

@@ -59,7 +59,7 @@ class VoiceToTextWidget extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Obx(() => SingleChildScrollView(
-                      child: Text(
+                      child: SelectableText(
                         controller.text.value,
                         style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary),
                         textAlign: TextAlign.center, // Center-align the text
