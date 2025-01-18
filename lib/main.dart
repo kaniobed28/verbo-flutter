@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         getPages: [
           GetPage(name: '/', page: () =>  TextToAudioHomePage()),
           GetPage(name: '/challenge-page', page: () => DailyChallengesPage()),
-          GetPage(name: '/speak-page', page: () => VoiceToTextWidget()),
+          GetPage(name: '/listen-page', page: () => VoiceToTextWidget()),
           GetPage(name: '/level-practice-page', page: () => PronunciationPracticePage()),
         ],
       );

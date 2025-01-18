@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:readit/challenge/questions_ui.dart';
 import 'package:readit/reusable/custom_appbar.dart';
 import 'package:readit/text_to_audio/controllers/text_to_audio_main_controller.dart';
-import 'package:readit/voice/views/voice_to_text.dart';
 
 class TextToAudioHomePage extends StatelessWidget {
   final TextToAudioController controller = Get.put(TextToAudioController());
@@ -11,7 +9,7 @@ class TextToAudioHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  CustomAppBar(),
+      appBar: CustomAppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
@@ -47,16 +45,17 @@ class TextToAudioHomePage extends StatelessWidget {
                     children: [
                       const Text('Number of Loops:'),
                       Obx(() => DropdownButton<int>(
-                        value: controller.loops.value,
-                        items: List.generate(10, (index) => index + 1)
-                            .map((value) => DropdownMenuItem(
-                                  value: value,
-                                  child: Text(value.toString()),
-                                )).toList(),
-                        onChanged: (value) {
-                          controller.loops.value = value!;
-                        },
-                      )),
+                            value: controller.loops.value,
+                            items: List.generate(10, (index) => index + 1)
+                                .map((value) => DropdownMenuItem(
+                                      value: value,
+                                      child: Text(value.toString()),
+                                    ))
+                                .toList(),
+                            onChanged: (value) {
+                              controller.loops.value = value!;
+                            },
+                          )),
                     ],
                   ),
                 ),
@@ -75,18 +74,19 @@ class TextToAudioHomePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('Playback Speed:'),
-                      Obx(() => Expanded( // Use Expanded to prevent overflow
-                        child: Slider(
-                          value: controller.speed.value,
-                          min: 0.1,
-                          max: 1.0,
-                          divisions: 10,
-                          activeColor: Theme.of(context).colorScheme.primary,
-                          onChanged: (value) {
-                            controller.speed.value = value;
-                          },
-                        ),
-                      )),
+                      Obx(() => Expanded(
+                            child: Slider(
+                              value: controller.speed.value,
+                              min: 0.1,
+                              max: 1.0,
+                              divisions: 10,
+                              activeColor:
+                                  Theme.of(context).colorScheme.primary,
+                              onChanged: (value) {
+                                controller.speed.value = value;
+                              },
+                            ),
+                          )),
                     ],
                   ),
                 ),
@@ -106,17 +106,17 @@ class TextToAudioHomePage extends StatelessWidget {
                     children: [
                       const Text('Select Language:'),
                       Obx(() => DropdownButton<String>(
-                        value: controller.selectedLanguage.value,
-                        items: controller.languages.map((language) {
-                          return DropdownMenuItem<String>(
-                            value: language['code'],
-                            child: Text(language['name']!),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          controller.selectedLanguage.value = value!;
-                        },
-                      )),
+                            value: controller.selectedLanguage.value,
+                            items: controller.languages.map((language) {
+                              return DropdownMenuItem<String>(
+                                value: language['code'],
+                                child: Text(language['name']!),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              controller.selectedLanguage.value = value!;
+                            },
+                          )),
                     ],
                   ),
                 ),
@@ -124,38 +124,84 @@ class TextToAudioHomePage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              // Play & Stop Buttons
-              Wrap( // Use Wrap instead of Row
-                spacing: 8.0, // Space between buttons
-                runSpacing: 8.0, // Space between rows
+              // Play, Pause, Resume & Stop Buttons
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
                 children: [
                   ElevatedButton.icon(
                     onPressed: () {
                       controller.speak();
                     },
-                    icon: Icon(Icons.play_arrow, color: Theme.of(context).colorScheme.onSurface),
+                    icon: Icon(Icons.play_arrow,
+                        color: Theme.of(context).colorScheme.onSurface),
                     label: Text(
                       'Play',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface),
                     ),
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
                     ),
                   ),
                   ElevatedButton.icon(
                     onPressed: () {
                       controller.stop();
                     },
-                    icon: Icon(Icons.stop, color: Theme.of(context).colorScheme.onSurface),
+                    icon: Icon(Icons.stop,
+                        color: Theme.of(context).colorScheme.onSurface),
                     label: Text(
                       'Stop',
-                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface),
                     ),
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
                     ),
                   ),
-                 
+                  Obx(() {
+                    return ElevatedButton.icon(
+                      onPressed: controller.isSpeaking.value
+                          ? () {
+                              controller.pause();
+                            }
+                          : null,
+                      icon: Icon(Icons.pause,
+                          color: Theme.of(context).colorScheme.onSurface),
+                      label: Text(
+                        'Pause',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                      ),
+                    );
+                  }),
+                  Obx(() {
+                    return ElevatedButton.icon(
+                      onPressed: controller.isPaused.value
+                          ? () {
+                              controller.resume();
+                            }
+                          : null,
+                      icon: Icon(Icons.play_arrow,
+                          color: Theme.of(context).colorScheme.onSurface),
+                      label: Text(
+                        'Resume',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 12),
+                      ),
+                    );
+                  }),
+                  
                 ],
               ),
             ],

@@ -64,7 +64,8 @@ class VoiceToTextWidget extends StatelessWidget {
                         style: TextStyle(fontSize: 18, color: Theme.of(context).colorScheme.primary),
                         textAlign: TextAlign.center, // Center-align the text
                       ),
-                    )),
+                    )
+                    ),
                   ),
                 ),
               ),
